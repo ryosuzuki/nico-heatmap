@@ -17,6 +17,7 @@
     "matches": ["http://www.nicovideo.jp/watch/sm*"],
     "js": [
       "app/bower_components/jquery/dist/jquery.js",
+      "app/bower_components/d3/d3.js",
       "build/app.js"
     ]
   }],
