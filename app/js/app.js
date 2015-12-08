@@ -31,23 +31,25 @@ $(window).load( function () {
   }
 
   function visualize(comments) {
-    var margin = {top: 40, right: 20, bottom: 30, left: 40},
-    width = 672 // - margin.left - margin.right,
-    height = 70// - margin.top - margin.bottom;
+    var margin = {top: 40, right: 20, bottom: 30, left: 40};
+    var width = 672;
+    var height = 70;
 
     var data = [4, 8, 15, 16, 23, 42];
-    var x = d3.scale.linear()
-    .range([0, width]);
+    var barWidth = width / data.length;
 
+    var x = d3.scale.linear()
+    .range([0, width])
+    .domain([0, d3.max(data)]);
     var y = d3.scale.linear()
-    .domain([0, d3.max(data)])
-    .range([height, 0]);
+    .range([height, 0])
+    .domain([0, d3.max(data)]);
 
     var svg = d3.select('#nicoplayerContainerInner')
     .append('svg')
     .attr('width', width)
     .attr('height', height)
-    .style('z-index', 10000)
+    .style('z-index', 1000)
     .style('bottom', '78px')
     .style('position', 'absolute')
     .style('background', 'yellow')
@@ -59,11 +61,10 @@ $(window).load( function () {
     .append('g')
 
     bar.append('rect')
-    .attr('x', function(d, index) { return x(index); })
-    .attr('width', 10)
-    .attr('y', function(d) { return y(d); })
-    .attr('height', function(d) { return height - y(d);　};
-
+    .attr('transform', function (d, i) { return 'translate(' + i * barWidth + ',0)'; })
+    .attr('width', barWidth - 1)
+    .attr('y', function (d) { return y(d); })
+    .attr('height', function (d) { return height - y(d);});
   }
 
 })
