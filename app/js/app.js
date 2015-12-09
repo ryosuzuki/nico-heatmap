@@ -24,7 +24,13 @@ $(window).load( function () {
       });
       var time = $('#img_wrap > div > div.length').text()
       var duration = convertSeconds(time);
-      visualize(comments, duration);
+      comments.map( function (comment) {
+        comment.seconds = convertSeconds(comment.time);
+        return comment;
+      }).sort(function (a, b) {
+        return a.seconds - b.seconds;
+      });
+      generate(comments, duration);
       return comments;
     })
   }
@@ -35,38 +41,39 @@ $(window).load( function () {
     return seconds;
   }
 
-  function visualize(comments, duration) {
-    var margin = {top: 40, right: 20, bottom: 30, left: 40};
-    var width = 672;
-    var height = 70;
+  function generate(comments, duration) {
+    var limit = 200;
+    var length = (duration <= limit) ? duration : limit;
+    var scale = duration/length;
 
-    var barWidth = width / duration;
     var data = []
-    for (var i=0; i <= duration; i++) {
+    for (var i=0; i <= length; i++) {
       var d = { value: 0, comments: [] }
       data.push(d);
     }
-
-    comments.map( function (comment) {
-      comment.seconds = convertSeconds(comment.time);
-      return comment;
-    }).sort(function (a, b) {
-      return a.seconds - b.seconds;
-    });
     comments.forEach( function (comment) {
-      var d = data[comment.seconds];
+      var index = Math.floor(comment.seconds/scale);
+      var d = data[index];
       d.comments.push(comment);
-      d.value = Math.pow(d.comments.length, 0.6);
-      data[comment.seconds] = d;
+      d.value = Math.pow(d.comments.length, 1);
+      data[index] = d;
     });
-
     console.log(data);
+    visualize(data);
+  }
+
+  function visualize(data) {
+    var margin = {top: 40, right: 20, bottom: 30, left: 40};
+    var width = 672;
+    var height = 70;
+    var barWidth = width / data.length;
+    var barMargin = barWidth / 3;
 
     var colors = d3.scale.category20();
 
     var x = d3.scale.linear()
     .range([0, width])
-    .domain([0, duration]);
+    .domain([0, data.length]);
 
     var y = d3.scale.linear()
     .range([height, 0])
@@ -82,7 +89,7 @@ $(window).load( function () {
     // .style('background', 'rgba(255, 255, 255, 0.5)')
     .append('g')
 
-    heatmap();
+    bar();
 
     function area () {
       var area = d3.svg.area()
@@ -111,10 +118,9 @@ $(window).load( function () {
       .append('g')
 
       bar.append('rect')
-      // .attr('transform', function (d, i) { return 'translate(' + i * barWidth + ',0)'; })
-      .attr('x', function (d) { return i * barWidth; })
+      .attr('transform', function (d, i) { return 'translate(' + i * barWidth + ',0)'; })
       .attr('y', function (d) { return y(d.value); })
-      .attr('width', barWidth)
+      .attr('width', barWidth - barMargin)
       .attr('height', function (d) { return height - y(d.value);})
       .attr('fill', function (d) { return colors(d.value); })
     }
