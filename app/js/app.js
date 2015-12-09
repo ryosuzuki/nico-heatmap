@@ -41,26 +41,28 @@ $(window).load( function () {
     var height = 70;
 
     var barWidth = width / duration;
-    var data = [];
+    var data = []
     for (var i=0; i <= duration; i++) {
-      data.push([]);
+      var d = { value: 0, comments: [] }
+      data.push(d);
     }
 
     comments.map( function (comment) {
       comment.seconds = convertSeconds(comment.time);
       return comment;
-    });
-    comments.sort(function (a, b) {
+    }).sort(function (a, b) {
       return a.seconds - b.seconds;
+    });
+    comments.forEach( function (comment) {
+      var d = data[comment.seconds];
+      d.comments.push(comment);
+      d.value = Math.pow(d.comments.length, 0.6);
+      data[comment.seconds] = d;
     });
 
     console.log(data);
-    console.log(comments);
-    comments.forEach( function (comment) {
-      console.log(comment)
-      data[comment.seconds].push(comment);
-    })
-    console.log(data);
+
+    var colors = d3.scale.category20();
 
     var x = d3.scale.linear()
     .range([0, width])
@@ -68,28 +70,85 @@ $(window).load( function () {
 
     var y = d3.scale.linear()
     .range([height, 0])
-    .domain([0, d3.max(data, function (d) { return d.length; })]);
+    .domain([0, d3.max(data, function (d) { return d.value; })]);
 
     var svg = d3.select('#nicoplayerContainerInner')
     .append('svg')
     .attr('width', width)
     .attr('height', height)
     .style('z-index', 1000)
-    .style('bottom', '78px')
+    .style('bottom', '75px')
     .style('position', 'absolute')
-    .style('background', 'yellow')
+    // .style('background', 'rgba(255, 255, 255, 0.5)')
     .append('g')
 
-    var bar = svg.selectAll('g')
-    .data(data)
-    .enter()
-    .append('g')
+    heatmap();
 
-    bar.append('rect')
-    .attr('transform', function (d, i) { return 'translate(' + i * barWidth + ',0)'; })
-    .attr('width', barWidth - 1)
-    .attr('y', function (d) { return y(d.length); })
-    .attr('height', function (d) { return height - y(d.length);});
+    function area () {
+      var area = d3.svg.area()
+      .x(function (d, i) { return x(i); })
+      .y0(height)
+      .y1(function (d) { return y(d.value); })
+
+      var line = d3.svg.line()
+      .x(function (d, i) { return x(i); })
+      .y(function (d) { return y(d.value); })
+
+      var stream = svg.selectAll('g')
+      .data(data)
+      .enter()
+      .append('g')
+
+      stream.append('path')
+      .attr('d', area(data))
+      .style('fill', 'red')
+    }
+
+    function bar () {
+      var bar = svg.selectAll('g')
+      .data(data)
+      .enter()
+      .append('g')
+
+      bar.append('rect')
+      // .attr('transform', function (d, i) { return 'translate(' + i * barWidth + ',0)'; })
+      .attr('x', function (d) { return i * barWidth; })
+      .attr('y', function (d) { return y(d.value); })
+      .attr('width', barWidth)
+      .attr('height', function (d) { return height - y(d.value);})
+      .attr('fill', function (d) { return colors(d.value); })
+    }
+
+    function heatmap () {
+
+      // var colors = [
+      //   'rgb(165,  0, 38)',
+      //   'rgb(215, 48, 39)',
+      //   'rgb(244,109, 67)',
+      //   'rgb(253,174, 97)',
+      //   'rgb(254,224,139)',
+      //   'rgb(255,255,191)',
+      //   'rgb(217,239,139)',
+      //   'rgb(166,217,106)',
+      //   'rgb(102,189, 99)',
+      //   'rgb( 26,152, 80)',
+      //   'rgb(  0,104, 55)',
+      // ]
+
+      var cellHeight = 20;
+      var rect = svg.selectAll('g')
+      .data(data)
+      .enter()
+      .append('g')
+
+      rect.append('rect')
+      .attr('width', barWidth)
+      .attr('height', cellHeight)
+      .attr('x', function (d, i) { return i * barWidth; })
+      .attr('y', function (d) { return height - cellHeight; })
+      .attr('fill', function (d) { return colors(d.value); })
+    }
+
   }
 
 })
