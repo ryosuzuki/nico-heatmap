@@ -69,15 +69,20 @@ $(window).load( function () {
     var barWidth = width / data.length;
     var barMargin = barWidth / 3;
 
-    var green = ['#edf8e9','#bae4b3','#74c476','#31a354','#006d2c']
-    var blue  = ['#eff3ff','#bdd7e7','#6baed6','#3182bd','#08519c']
-    var orange = ['#ffffd4','#fed98e','#fe9929','#d95f0e','#f25123']
+    var green = ['#edf8e9','#bae4b3','#74c476','#31a354','#006d2c'];
+    var blue  = ['#eff3ff','#bdd7e7','#6baed6','#3182bd','#08519c'];
+    var orange = ['#ffffd4','#fed98e','#fe9929','#d95f0e','#f25123'];
+    var gray = ['#f7f7f7','#d9d9d9','#bdbdbd','#969696','#636363'];
+    var white = ['#636363', '#969696', '#bdbdbd', '#d9d9d9', '#f7f7f7']
     var orangePurple = ['#5e3c99','#b2abd2','#f7f7f7','#fdb863','#e66101'];
     var yellowGreen = ['#018571','#80cdc1','#f5f5f5','#dfc27d','#a6611a'];
-    var redBlue = ['#2c7bb6', '#abd9e9', '#ffffbf', '#fdae61', '#d7191c']
+    var redBlue = ['#2c7bb6', '#abd9e9', '#ffffbf', '#fdae61', '#d7191c'];
 
-    var color = d3.scale.linear()
-    .range(orange)
+
+    var color = gray;
+
+    var colorScale = d3.scale.linear()
+    .range(color)
     .domain([
       0,
       d3.max(data, function (d) { return d.value; })*0.1,
@@ -107,10 +112,31 @@ $(window).load( function () {
     area();
 
     function area () {
-      var area = d3.svg.area()
+      var area1 = d3.svg.area()
       .x(function (d, i) { return x(i); })
       .y0(height)
-      .y1(function (d) { return y(d.value); })
+      .y1(function (d) { return y(d.value*1.0); })
+
+      var area2 = d3.svg.area()
+      .x(function (d, i) { return x(i); })
+      .y0(height)
+      .y1(function (d) { return y(d.value*0.7); })
+
+      var area3 = d3.svg.area()
+      .x(function (d, i) { return x(i); })
+      .y0(height)
+      .y1(function (d) { return y(d.value*0.4); })
+
+      var area4 = d3.svg.area()
+      .x(function (d, i) { return x(i); })
+      .y0(height)
+      .y1(function (d) { return y(d.value*0.2); })
+
+      var area5 = d3.svg.area()
+      .x(function (d, i) { return x(i); })
+      .y0(height)
+      .y1(function (d) { return y(d.value*0.1); })
+
 
       var line = d3.svg.line()
       .x(function (d, i) { return x(i); })
@@ -122,8 +148,26 @@ $(window).load( function () {
       .append('g')
 
       stream.append('path')
-      .attr('d', area(data))
-      .style('fill', function (d) { return color(d.value); })
+      .attr('d', area1(data))
+      .style('fill', function (d) { return color[4]; })
+
+      stream.append('path')
+      .attr('d', area2(data))
+      .style('fill', function (d) { return color[3]; })
+
+      stream.append('path')
+      .attr('d', area3(data))
+      .style('fill', function (d) { return color[2]; })
+
+      stream.append('path')
+      .attr('d', area4(data))
+      .style('fill', function (d) { return color[1]; })
+
+      stream.append('path')
+      .attr('d', area5(data))
+      .style('fill', function (d) { return color[0]; })
+
+
     }
 
     function bar () {
@@ -137,7 +181,7 @@ $(window).load( function () {
       .attr('y', function (d) { return y(d.value); })
       .attr('width', barWidth - barMargin)
       .attr('height', function (d) { return height - y(d.value);})
-      .attr('fill', function (d) { return color(d.value); })
+      .attr('fill', function (d) { return colorScale(d.value); })
     }
 
     function heatmap () {
@@ -152,7 +196,7 @@ $(window).load( function () {
       .attr('height', cellHeight)
       .attr('x', function (d, i) { return i * barWidth; })
       .attr('y', function (d) { return height - cellHeight; })
-      .attr('fill', function (d) { return color(d.value); })
+      .attr('fill', function (d) { return colorScale(d.value); })
     }
 
   }
