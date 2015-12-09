@@ -7,12 +7,10 @@
     "16": "app/img/icon-16.png",
     "128": "app/img/icon-128.png"
   },
-
   "browser_action": {
     "default_icon": "app/img/icon-16.png",
     "default_title": "Nico Heatmap"
   },
-
   "content_scripts": [{
     "matches": ["http://www.nicovideo.jp/watch/sm*"],
     "js": [
@@ -21,9 +19,8 @@
       "build/app.js"
     ]
   }],
-
+  "options_page": "options.html",
   "permissions": [
     "tabs", "http://*/*", "https://*/*"
   ]
-
 }

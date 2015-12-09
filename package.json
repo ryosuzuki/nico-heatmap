@@ -6,9 +6,7 @@
     "d3": "^3.5.10",
     "gulp": "^3.9.0",
     "gulp-browserify": "^0.5.1",
-    "htmlparser2": "^3.9.0",
     "lodash": "^3.10.1",
-    "moment": "^2.10.6",
     "request": "^2.67.0"
   },
   "devDependencies": {},

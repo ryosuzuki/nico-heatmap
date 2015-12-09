@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="app/bower_components/semantic-ui/dist/semantic.css">
+  <script src="app/bower_components/jquery/dist/jquery.js"></script>
+  <script src="app/bower_components/d3/d3.js"></script>
+  <script src="app/bower_components/semantic-ui/dist/semantic.js"></script>
+  <script src="build/options.js"></script>
+  <meta charset="UTF-8">
+
+  <style>
+    #nicoplayerContainerInner {
+      /*width: 672px;*/
+      /*height: 461px;*/
+      background: #000;
+    }
+  </style>
+  <title>Options</title>
+</head>
+<body>
+  <div class="ui centered grid" style="margin-top: 30px;">
+
+    <div id="nicoplayerContainerInner" class="ui seven wide column">
+      <div ></div>
+    </div>
+
+    <div class="ui three wide column">
+      <h1>Option</h1>
+      <div class="ui form">
+        <div class="grouped fields">
+          <label for="color">Select your favorite color:</label>
+          <div class="field">
+            <div class="ui radio checkbox">
+              <input type="radio" name="color" checked="" tabindex="0" class="hidden">
+              <label>Orange</label>
+            </div>
+          </div>
+          <div class="field">
+            <div class="ui radio checkbox">
+              <input type="radio" name="color" tabindex="0" class="hidden">
+              <label>Green</label>
+            </div>
+          </div>
+          <div class="field">
+            <div class="ui radio checkbox">
+              <input type="radio" name="color" tabindex="0" class="hidden">
+              <label>Blue</label>
+            </div>
+          </div>
+          <div class="field">
+            <div class="ui radio checkbox">
+              <input type="radio" name="color" tabindex="0" class="hidden">
+              <label>Gray</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ui form">
+
+        <div class="grouped fields">
+          <label for="color">Select your chart type:</label>
+          <div class="field">
+            <div class="ui radio checkbox">
+              <input type="radio" name="color" checked="" tabindex="0" class="hidden">
+              <label>Area</label>
+            </div>
+          </div>
+          <div class="field">
+            <div class="ui radio checkbox">
+              <input type="radio" name="color" tabindex="0" class="hidden">
+              <label>Bar</label>
+            </div>
+          </div>
+          <div class="field">
+            <div class="ui radio checkbox">
+              <input type="radio" name="color" tabindex="0" class="hidden">
+              <label>Heat Map</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

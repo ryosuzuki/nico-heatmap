@@ -15,5 +15,13 @@ gulp.task('default', function () {
       insertGlobals : true,
       debug : !gulp.env.production
     }))
-    .pipe(gulp.dest('./build'))
+    .pipe(gulp.dest('build'))
+
+  gulp.src('app/js/options.js')
+    .pipe(browserify({
+      insertGlobals : true,
+      debug : !gulp.env.production
+    }))
+    .pipe(gulp.dest('build'))
+
 });
