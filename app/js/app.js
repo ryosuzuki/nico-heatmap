@@ -1,17 +1,15 @@
 
 var request = require('request');
 var cheerio = require('cheerio');
-var comments = [];
-window.comments = comments;
 
 $(window).load( function () {
 
   var id = window.location.pathname.split('/')[2];
-  getComments(id);
+  var comments = [];
+  collect(id);
 
-  function getComments(id) {
+  function collect(id) {
     var url = "http://nicoco.net/" + id;
-    console.log(url)
     request(url, function (err, res, html) {
       var $ = cheerio.load(html);
       $("#com_table > tr").each( function () {
@@ -24,26 +22,53 @@ $(window).load( function () {
         }
         comments.push(comment);
       });
-      console.log(comments);
-      visualize(comments);
+      var time = $('#img_wrap > div > div.length').text()
+      var duration = convertSeconds(time);
+      visualize(comments, duration);
       return comments;
     })
   }
 
-  function visualize(comments) {
+  function convertSeconds(text) {
+    var ms = text.replace(/[^\d]/g, ':').split(':');
+    var seconds = (+ms[0]) * 60 + (+ms[1]);
+    return seconds;
+  }
+
+  function visualize(comments, duration) {
     var margin = {top: 40, right: 20, bottom: 30, left: 40};
     var width = 672;
     var height = 70;
 
-    var data = [4, 8, 15, 16, 23, 42];
-    var barWidth = width / data.length;
+    var barWidth = width / duration;
+    var data = [];
+    for (var i=0; i <= duration; i++) {
+      data.push([]);
+    }
+
+    comments.map( function (comment) {
+      comment.seconds = convertSeconds(comment.time);
+      return comment;
+    });
+    comments.sort(function (a, b) {
+      return a.seconds - b.seconds;
+    });
+
+    console.log(data);
+    console.log(comments);
+    comments.forEach( function (comment) {
+      console.log(comment)
+      data[comment.seconds].push(comment);
+    })
+    console.log(data);
 
     var x = d3.scale.linear()
     .range([0, width])
-    .domain([0, d3.max(data)]);
+    .domain([0, duration]);
+
     var y = d3.scale.linear()
     .range([height, 0])
-    .domain([0, d3.max(data)]);
+    .domain([0, d3.max(data, function (d) { return d.length; })]);
 
     var svg = d3.select('#nicoplayerContainerInner')
     .append('svg')
@@ -63,8 +88,8 @@ $(window).load( function () {
     bar.append('rect')
     .attr('transform', function (d, i) { return 'translate(' + i * barWidth + ',0)'; })
     .attr('width', barWidth - 1)
-    .attr('y', function (d) { return y(d); })
-    .attr('height', function (d) { return height - y(d);});
+    .attr('y', function (d) { return y(d.length); })
+    .attr('height', function (d) { return height - y(d.length);});
   }
 
 })
